@@ -22,7 +22,7 @@ Listed in order of features added:
 8)	Windc_HH_chk – Adds household income groups to model
 9)	Windc_Tk_chk – inv (swaps leisure and investment nesting) -- this is correct leisure/investment nesting that we use in SLiDE
 10)	Windc_HH_chk – inv (swaps leisure and investment nesting) – this is correct leisure/investment nesting that we use in SLiDE
-11)	simple_recursive - a simple recursive dynamic setup
+11)	simple_recursive - a simple recursive dynamic setup - see commit history for layered recursive features
 
 The bmk_data directory contains the windc benchmark which the model is calibrated to.
 If you are curious about differences between these files, I recommend downloading the kdiff3 tool to look at differences across files. For example, you could compare windc_ll_chk/mcpmodel_ll.gms to windc_core_chk/mcpmodel.gms to see the changes that were layered in.
