@@ -1,0 +1,332 @@
+$OFFLISTING
+
+* MPS/GE MODEL GENERATOR FILE
+
+$OFFINLINE
+$INLINECOM { }
+PUT   MPS,'$MODEL:MGEMODEL'/;
+
+{    2}  PUT /;
+ 
+{    2}  PUT'$SECTORS:'/;
+{    3}  LOOP((R,S)$(Y_(R,S)),
+{    3}    PUT /,'Y''.'R.TL'.'S.TL;
+{    3}  );
+{    4}  LOOP((R,G)$(X_(R,G)),
+{    4}    PUT /,'X''.'R.TL'.'G.TL;
+{    4}  );
+{    5}  LOOP((R,G)$(A_(R,G)),
+{    5}    PUT /,'A''.'R.TL'.'G.TL;
+{    5}  );
+{    6}  LOOP((R),
+{    6}    PUT /,'C''.'R.TL;
+{    6}  );
+{    7}  LOOP((R,M),
+{    7}    PUT /,'MS''.'R.TL'.'M.TL;
+{    7}  );
+{    9}  LOOP((R),
+{    9}    PUT /,'LS''.'R.TL;
+{    9}  );
+{   10}  LOOP((R),
+{   10}    PUT /,'INV''.'R.TL;
+{   10}  );
+{   11}  LOOP((R),
+{   11}    PUT /,'Z''.'R.TL;
+{   11}  );
+{   12}  LOOP((R),
+{   12}    PUT /,'W''.'R.TL;
+{   12}  );
+{   14}  PUT /;
+ 
+{   14}  PUT'$COMMODITIES:'/;
+{   15}  LOOP((R,G)$(A0(R,G)),
+{   15}    PUT /,'PA''.'R.TL'.'G.TL;
+{   15}  );
+{   16}  LOOP((R,G)$(S0(R,G)),
+{   16}    PUT /,'PY''.'R.TL'.'G.TL;
+{   16}  );
+{   17}  LOOP((R,G)$(XD0(R,G)),
+{   17}    PUT /,'PD''.'R.TL'.'G.TL;
+{   17}  );
+{   18}  LOOP((G),
+{   18}    PUT /,'PN''.'G.TL;
+{   18}  );
+{   19}  LOOP((R),
+{   19}    PUT /,'PL''.'R.TL;
+{   19}  );
+{   20}  LOOP((R,S)$(KD0(R,S)),
+{   20}    PUT /,'PK''.'R.TL'.'S.TL;
+{   20}  );
+{   21}  LOOP((R,M),
+{   21}    PUT /,'PM''.'R.TL'.'M.TL;
+{   21}  );
+{   22}  LOOP((R),
+{   22}    PUT /,'PC''.'R.TL;
+{   22}  );
+{   23}  PUT /,'PFX';
+{   25}  LOOP((R),
+{   25}    PUT /,'PLS''.'R.TL;
+{   25}  );
+{   26}  LOOP((R),
+{   26}    PUT /,'PINV''.'R.TL;
+{   26}  );
+{   27}  LOOP((R),
+{   27}    PUT /,'PZ''.'R.TL;
+{   27}  );
+{   28}  LOOP((R),
+{   28}    PUT /,'PW''.'R.TL;
+{   28}  );
+{   30}  PUT /;
+ 
+{   30}  PUT'$CONSUMER:'/;
+{   31}  LOOP((R),
+{   31}    PUT /,'RA''.'R.TL;
+{   31}  );
+ 
+{   33}  LOOP((R,S)$(Y_(R,S)),
+{   33}    PUT /;
+{   33}    PUT /,'$PROD:Y''.'R.TL'.'S.TL;
+{   33}    IF ((ABS(0) GT MPSEPS),PUT /,'+S:'0;  );
+{   33}    PUT /,'+VA:'1;
+{   34}    LOOP((G),
+{   34}      IF(ABS(YS0(R,S,G)) GT MPSEPS,
+{   34}        PUT /,'O:PY''.'R.TL'.'G.TL;
+{   34}        PUT /,'+Q:'YS0(R,S,G);
+{   34}        PUT /'+','A:RA''.'R.TL;
+{   34}        IF ((ABS(TY(R,S)) GT MPSEPS),PUT /,'+T:'TY(R,S);  );
+{   34}        PUT /,'+P:'(1-TY0(R,S));
+{   35}      );
+{   35}    );
+{   35}    LOOP((G),
+{   35}      IF(ABS(ID0(R,G,S)) GT MPSEPS,
+{   35}        PUT /,'I:PA''.'R.TL'.'G.TL;
+{   35}        PUT /,'+Q:'ID0(R,G,S);
+{   36}      );
+{   36}    );
+{   36}    IF(ABS(LD0(R,S)) GT MPSEPS,
+{   36}      PUT /,'I:PL''.'R.TL;
+{   36}      PUT /,'+Q:'LD0(R,S);
+{   36}      PUT /,'+VA:' ;
+{   38}    );
+{   38}    IF(ABS(KD0(R,S)) GT MPSEPS,
+{   38}      PUT /,'I:PK''.'R.TL'.'S.TL;
+{   38}      PUT /,'+Q:'KD0(R,S);
+{   38}      PUT /,'+VA:' ;
+{   40}    );
+{   40}  );
+ 
+{   40}  LOOP((R,G)$(X_(R,G)),
+{   40}    PUT /;
+{   40}    PUT /,'$PROD:X''.'R.TL'.'G.TL;
+{   40}    IF ((ABS(ETRANX(G)) GT MPSEPS),PUT /,'+T:'ETRANX(G);  );
+{   41}    IF(ABS((X0(R,G)-RX0(R,G))) GT MPSEPS,
+{   41}      PUT /,'O:PFX';
+{   41}      PUT /,'+Q:'(X0(R,G)-RX0(R,G));
+{   42}    );
+{   42}    IF(ABS(XN0(R,G)) GT MPSEPS,
+{   42}      PUT /,'O:PN''.'G.TL;
+{   42}      PUT /,'+Q:'XN0(R,G);
+{   43}    );
+{   43}    IF(ABS(XD0(R,G)) GT MPSEPS,
+{   43}      PUT /,'O:PD''.'R.TL'.'G.TL;
+{   43}      PUT /,'+Q:'XD0(R,G);
+{   44}    );
+{   44}    IF(ABS(S0(R,G)) GT MPSEPS,
+{   44}      PUT /,'I:PY''.'R.TL'.'G.TL;
+{   44}      PUT /,'+Q:'S0(R,G);
+{   46}    );
+{   46}  );
+ 
+{   46}  LOOP((R,G)$(A_(R,G)),
+{   46}    PUT /;
+{   46}    PUT /,'$PROD:A''.'R.TL'.'G.TL;
+{   46}    IF ((ABS(0) GT MPSEPS),PUT /,'+S:'0;  );
+{   46}    PUT /,'+DM:'ESUBDM(G);
+{   46}    PUT /,'+D(DM):'ESUBD(R,G);
+{   47}    IF(ABS(A0(R,G)) GT MPSEPS,
+{   47}      PUT /,'O:PA''.'R.TL'.'G.TL;
+{   47}      PUT /,'+Q:'A0(R,G);
+{   47}      PUT /'+','A:RA''.'R.TL;
+{   47}      IF ((ABS(TA(R,G)) GT MPSEPS),PUT /,'+T:'TA(R,G);  );
+{   47}      PUT /,'+P:'(1-TA0(R,G));
+{   48}    );
+{   48}    IF(ABS(RX0(R,G)) GT MPSEPS,
+{   48}      PUT /,'O:PFX';
+{   48}      PUT /,'+Q:'RX0(R,G);
+{   49}    );
+{   49}    IF(ABS(ND0(R,G)) GT MPSEPS,
+{   49}      PUT /,'I:PN''.'G.TL;
+{   49}      PUT /,'+Q:'ND0(R,G);
+{   49}      PUT /,'+D:' ;
+{   50}    );
+{   50}    IF(ABS(DD0(R,G)) GT MPSEPS,
+{   50}      PUT /,'I:PD''.'R.TL'.'G.TL;
+{   50}      PUT /,'+Q:'DD0(R,G);
+{   50}      PUT /,'+D:' ;
+{   51}    );
+{   51}    IF(ABS(M0(R,G)) GT MPSEPS,
+{   51}      PUT /,'I:PFX';
+{   51}      PUT /,'+Q:'M0(R,G);
+{   51}      PUT /,'+DM:' ;
+{   51}      PUT /'+','A:RA''.'R.TL;
+{   51}      IF ((ABS(TM(R,G)) GT MPSEPS),PUT /,'+T:'TM(R,G);  );
+{   51}      PUT /,'+P:'(1+TM0(R,G));
+{   52}    );
+{   52}    LOOP((M),
+{   52}      IF(ABS(MD0(R,M,G)) GT MPSEPS,
+{   52}        PUT /,'I:PM''.'R.TL'.'M.TL;
+{   52}        PUT /,'+Q:'MD0(R,M,G);
+{   54}      );
+{   54}    );
+{   54}  );
+ 
+{   54}  LOOP((R,M),
+{   54}    PUT /;
+{   54}    PUT /,'$PROD:MS''.'R.TL'.'M.TL;
+{   55}    IF(ABS((SUM(GM, MD0(R,M,GM)))) GT MPSEPS,
+{   55}      PUT /,'O:PM''.'R.TL'.'M.TL;
+{   55}      PUT /,'+Q:'(SUM(GM, MD0(R,M,GM)));
+{   56}    );
+{   56}    LOOP((GM),
+{   56}      IF(ABS(NM0(R,GM,M)) GT MPSEPS,
+{   56}        PUT /,'I:PN''.'GM.TL;
+{   56}        PUT /,'+Q:'NM0(R,GM,M);
+{   57}      );
+{   57}    );
+{   57}    LOOP((GM),
+{   57}      IF(ABS(DM0(R,GM,M)) GT MPSEPS,
+{   57}        PUT /,'I:PD''.'R.TL'.'GM.TL;
+{   57}        PUT /,'+Q:'DM0(R,GM,M);
+{   59}      );
+{   59}    );
+{   59}  );
+ 
+{   59}  LOOP((R),
+{   59}    PUT /;
+{   59}    PUT /,'$PROD:C''.'R.TL;
+{   59}    IF ((ABS(ESUB_CD) GT MPSEPS),PUT /,'+S:'ESUB_CD;  );
+{   60}    IF(ABS(C0(R)) GT MPSEPS,
+{   60}      PUT /,'O:PC''.'R.TL;
+{   60}      PUT /,'+Q:'C0(R);
+{   61}    );
+{   61}    LOOP((G),
+{   61}      IF(ABS(CD0(R,G)) GT MPSEPS,
+{   61}        PUT /,'I:PA''.'R.TL'.'G.TL;
+{   61}        PUT /,'+Q:'CD0(R,G);
+{   64}      );
+{   64}    );
+{   64}  );
+ 
+{   64}  LOOP((R),
+{   64}    PUT /;
+{   64}    PUT /,'$PROD:INV''.'R.TL;
+{   64}    IF ((ABS(ESUB_INV) GT MPSEPS),PUT /,'+S:'ESUB_INV;  );
+{   65}    IF(ABS(INV0(R)) GT MPSEPS,
+{   65}      PUT /,'O:PINV''.'R.TL;
+{   65}      PUT /,'+Q:'INV0(R);
+{   66}    );
+{   66}    LOOP((G),
+{   66}      IF(ABS(I0(R,G)) GT MPSEPS,
+{   66}        PUT /,'I:PA''.'R.TL'.'G.TL;
+{   66}        PUT /,'+Q:'I0(R,G);
+{   69}      );
+{   69}    );
+{   69}  );
+ 
+{   69}  LOOP((R),
+{   69}    PUT /;
+{   69}    PUT /,'$PROD:LS''.'R.TL;
+{   70}    IF(ABS((LAB_E0(R))) GT MPSEPS,
+{   70}      PUT /,'O:PL''.'R.TL;
+{   70}      PUT /,'+Q:'(LAB_E0(R));
+{   71}    );
+{   71}    IF(ABS((LAB_E0(R))) GT MPSEPS,
+{   71}      PUT /,'I:PLS''.'R.TL;
+{   71}      PUT /,'+Q:'(LAB_E0(R));
+{   74}    );
+{   74}  );
+ 
+{   74}  LOOP((R),
+{   74}    PUT /;
+{   74}    PUT /,'$PROD:Z''.'R.TL;
+{   74}    IF ((ABS(0) GT MPSEPS),PUT /,'+S:'0;  );
+{   75}    IF(ABS(Z0(R)) GT MPSEPS,
+{   75}      PUT /,'O:PZ''.'R.TL;
+{   75}      PUT /,'+Q:'Z0(R);
+{   76}    );
+{   76}    IF(ABS(C0(R)) GT MPSEPS,
+{   76}      PUT /,'I:PC''.'R.TL;
+{   76}      PUT /,'+Q:'C0(R);
+{   77}    );
+{   77}    IF(ABS(INV0(R)) GT MPSEPS,
+{   77}      PUT /,'I:PINV''.'R.TL;
+{   77}      PUT /,'+Q:'INV0(R);
+{   80}    );
+{   80}  );
+ 
+{   80}  LOOP((R),
+{   80}    PUT /;
+{   80}    PUT /,'$PROD:W''.'R.TL;
+{   80}    IF ((ABS(ESUB_Z(R)) GT MPSEPS),PUT /,'+S:'ESUB_Z(R);  );
+{   81}    IF(ABS(W0(R)) GT MPSEPS,
+{   81}      PUT /,'O:PW''.'R.TL;
+{   81}      PUT /,'+Q:'W0(R);
+{   82}    );
+{   82}    IF(ABS(Z0(R)) GT MPSEPS,
+{   82}      PUT /,'I:PZ''.'R.TL;
+{   82}      PUT /,'+Q:'Z0(R);
+{   83}    );
+{   83}    IF(ABS(LEIS_E0(R)) GT MPSEPS,
+{   83}      PUT /,'I:PLS''.'R.TL;
+{   83}      PUT /,'+Q:'LEIS_E0(R);
+{   86}    );
+{   86}  );
+ 
+{   86}  LOOP((R),
+{   86}    PUT /;
+{   86}    PUT /,'$DEMAND:RA''.'R.TL;
+{   87}    IF(ABS(W0(R)) GT MPSEPS,
+{   87}      PUT /,'D:PW''.'R.TL;
+{   87}      PUT /,'+Q:'W0(R);
+{   88}    );
+{   88}    LOOP((G),
+{   88}      IF(ABS(YH0(R,G)) GT MPSEPS,
+{   88}        PUT /,'E:PY''.'R.TL'.'G.TL;
+{   88}        PUT /,'+Q:'YH0(R,G);
+{   89}      );
+{   89}    );
+{   89}    IF(ABS((BOPDEF0(R) + HHADJ(R))) GT MPSEPS,
+{   89}      PUT /,'E:PFX';
+{   89}      PUT /,'+Q:'(BOPDEF0(R) + HHADJ(R));
+{   90}    );
+{   90}    LOOP((G),
+{   90}      IF(ABS((-G0(R,G))) GT MPSEPS,
+{   90}        PUT /,'E:PA''.'R.TL'.'G.TL;
+{   90}        PUT /,'+Q:'(-G0(R,G));
+{   91}      );
+{   91}    );
+{   91}    IF(ABS((LAB_E0(R))) GT MPSEPS,
+{   91}      PUT /,'E:PLS''.'R.TL;
+{   91}      PUT /,'+Q:'(LAB_E0(R));
+{   92}    );
+{   92}    IF(ABS(LEIS_E0(R)) GT MPSEPS,
+{   92}      PUT /,'E:PLS''.'R.TL;
+{   92}      PUT /,'+Q:'LEIS_E0(R);
+{   93}    );
+{   93}    LOOP((S),
+{   93}      IF(ABS(KD0(R,S)) GT MPSEPS,
+{   93}        PUT /,'E:PK''.'R.TL'.'S.TL;
+{   93}        PUT /,'+Q:'KD0(R,S);
+{   95}      );
+{   95}    );
+{   95}  );
+ 
+OPTION LIMROW=0;
+OPTION LIMCOL=0;
+PUT / '$PEPS:1.E-6'/;
+PUT / '$SOLVE'/;
+PUTCLOSE   MPS;
+MGEMODEL.INTEGER1 = MGEMODEL.INTEGER1 + 1;
+$IF %MGEMODEL%=="10/25/2215:55:20" $EXIT
+$error model.gen file is inconsistent
+$abort preprocessor must be reinvoked

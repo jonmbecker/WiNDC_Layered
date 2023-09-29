@@ -1,0 +1,11 @@
+*       Calibration assignments for the MCP model.
+lvs(r,s) = 0; lvs(r,s)$ld0(r,s) = ld0(r,s)/(ld0(r,s)+kd0(r,s));
+thetaxd(r,g)$[s0(r,g)] = xd0(r,g)/s0(r,g);
+thetaxn(r,g)$[s0(r,g)] = xn0(r,g)/s0(r,g);
+thetaxe(r,g)$[s0(r,g)] = (x0(r,g)-rx0(r,g))/s0(r,g);
+thetam(r,g)=0; thetan(r,g)=0;
+thetam(r,g)$m0(r,g) = m0(r,g)*(1+tm0(r,g))/(m0(r,g)*(1+tm0(r,g))+nd0(r,g)+dd0(r,g));
+thetan(r,g)$nd0(r,g) = nd0(r,g) /(nd0(r,g)+dd0(r,g));
+theta_cd(r,g)=0; theta_cd(r,g)$[sum(gg,cd0(r,gg))] = cd0(r,g)/sum(gg,cd0(r,gg));
+theta_inv(r,g)=0; theta_inv(r,g)$[sum(gg,i0(r,gg))] = i0(r,g)/sum(gg,i0(r,gg));
+theta_w(r)=0; theta_w(r)$w0(r) = leis_e0(r)/w0(r);
