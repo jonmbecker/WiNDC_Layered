@@ -29,9 +29,16 @@ ks_x(r,s) = kd0(r,s)*thetax*(srv**(t.val-%bmkyr%));
 * assign productivity growth factor for current year
 gprod = prodf(t);
 
+* set clean subsidy rate
+cl_sub = -1*cl_sub_yr(t);
+
 $INCLUDE MGEMODEL.GEN
 SOLVE MGEMODEL using mcp;
 ABORT$(MGEMODEL.objval > 1e-4) "Error solving MGE model.";
+
+rep(r,s,t,"Y_CLBS")$[clbs_act(r,s)] = Y_CLBS.L(r,s);
+rep(r,s,t,"YM")$[ele(s)] = YM.L(r,s)*sum(g,ys0(r,s,g));
+rep(r,g,t,"SX") = X.l(r,g)*s0(r,g);
 
 * end loop over t
 );

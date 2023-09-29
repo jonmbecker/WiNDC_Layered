@@ -70,6 +70,7 @@ $auxiliary:
 $prod:Y_CLBS(r,s)$[clbs_act(r,s)]	s:es_clbs(r,s)	mva:0 m(mva):0 va(mva):0
 	o:PY(r,g)	q:clbs_out(r,s,g)
 +		a:GOVT	t:ty(r,s)	p:(1-ty0(r,s))
++		a:GOVT$[sw_clsub]	t:cl_sub$[sw_clsub]
 	i:PA(r,g)	q:(clbs_in(r,g,s)*clbs_mkup(r,s))		m:
 	i:PL(r)		q:(clbs_in(r,"l",s)*clbs_mkup(r,s))		va:
 	i:RK(r,s)	q:(clbs_in(r,"k",s)*clbs_mkup(r,s))		va:

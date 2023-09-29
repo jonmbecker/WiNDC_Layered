@@ -16,7 +16,7 @@ $if not set thetaxval $setglobal thetaxval 0
 * benchmark year
 $if not set bmkyr $setglobal bmkyr 2017
 * end year in time horizon
-$if not set endyr $setglobal endyr 2020
+$if not set endyr $setglobal endyr 2035
 * growth rate
 $if not set etaval $setglobal etaval 0.02
 * clean backstop active [0] no, [1] yes

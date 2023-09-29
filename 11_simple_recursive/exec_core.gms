@@ -12,6 +12,10 @@ $include readdata_hh.gms
 * initialize clean backstop
 $include init_clbs.gms
 
+* initialize policy
+$include init_pol.gms
+
+
 *	Read the MGE model:
 $include mgemodel_hh
 
@@ -35,8 +39,15 @@ ABORT$(mgemodel.objval > 1e-4) "Error in benchmark calibration of the MGE model.
 
 * $exit
 
+parameter rep;
+
 *------------------------------------------------------------------------
 * loop
 *------------------------------------------------------------------------
 
 $include exec_loop.gms
+
+*------------------------------------------------------------------------
+
+
+execute_unload "recursive_out.gdx";

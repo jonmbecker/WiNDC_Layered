@@ -106,7 +106,8 @@ clbs_in(r,"k",s)$[clbs_act(r,s)] = clbs_in(r,"k",s) + clbs_in(r,"fr",s);
 
 * set markup factor
 * greater than 1 for initially non-binding backstop
-clbs_mkup(r,s)$[clbs_act(r,s)] = 1.1;
+* !!!! for very low backstops, non-steady-state calibrated price changes over time can cause binding in later years
+clbs_mkup(r,s)$[clbs_act(r,s)] = 1.2;
 
 * set tsf substitution elasticity (top level nest)
 * this nest makes it so you can't build infinitely, can only build so much without prohibitive costs
