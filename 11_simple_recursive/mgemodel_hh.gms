@@ -22,6 +22,8 @@ $sectors:
 	KS				! Aggregate capital supply
 	CO2(r)			! co2 emissions
 	
+	Y_CLBS(r,s)$[clbs_act(r,s)]	! Generic clean backstop technology
+
 $commodities:
 	PE(r,s)$[en_bar(r,s)]
 	PVA(r,s)$[va_bar(r,s)]
@@ -49,6 +51,8 @@ $commodities:
 	PCO2		! Carbon factor price
 	PDCO2(r)	! Effective carbon price
 
+	PR_CLBS(r,s)$[clbs_act(r,s)]	! CLBS tech-specific factor price
+
 $consumer:
 	RA(r,h)		! Representative agent
 	NYSE		! Aggregate capital owner
@@ -56,6 +60,26 @@ $consumer:
 
 $auxiliary:
 	TRANS		! Budget balance rationing constraint
+
+
+*------------------------------------------------------------------------
+* Backstop CLBS - generic clean backstop tech
+*------------------------------------------------------------------------
+
+* generic clean backstop production
+$prod:Y_CLBS(r,s)$[clbs_act(r,s)]	s:es_clbs(r,s)	mva:0 m(mva):0 va(mva):0
+	o:PY(r,g)	q:clbs_out(r,s,g)
++		a:GOVT	t:ty(r,s)	p:(1-ty0(r,s))
+	i:PA(r,g)	q:(clbs_in(r,g,s)*clbs_mkup(r,s))		m:
+	i:PL(r)		q:(clbs_in(r,"l",s)*clbs_mkup(r,s))		va:
+	i:RK(r,s)	q:(clbs_in(r,"k",s)*clbs_mkup(r,s))		va:
++		a:GOVT	t:tk(r,s)	p:(1-tk0(r))
+* 	i:RKS	q:(clbs_in(r,"k",s)*clbs_mkup(r,s))		va:
+* +		a:GOVT	t:tk(r,s)	p:(1-tk0(r))
+	i:PR_CLBS(r,s)	q:(clbs_in(r,"tsf",s)*clbs_mkup(r,s))
++		a:GOVT	t:tk(r,s)	p:(1-tk0(r))
+
+*------------------------------------------------------------------------
 
 
 * value added
@@ -170,6 +194,7 @@ $demand:NYSE
 	e:RKS			q:(sum(r,ks_m(r)))
 	e:RKX(r,s)$[ks_x(r,s)]				q:ks_x(r,s)
 *	e:PREB(r,bt)$[activebt(r,bt)$swbt]	q:bse(r,"ff",bt)
+	e:PR_CLBS(r,s)$[clbs_act(r,s)]	q:clbse(r,s)
 
 $constraint:TRANS
 	GOVT =e= sum((r,g), PA(r,g)*g0(r,g));
@@ -188,4 +213,9 @@ PCO2.l = 1e-6;
 PDCO2.l(r) = 1e-6;
 
 TRANS.l = 1;
+
+* generic clean backstop initalization
+Y_CLBS.l(r,s) = 0;
+PR_CLBS.l(r,s) = 1e-6;
+PR_CLBS.lo(r,s) = 1e-6;
 

@@ -19,6 +19,8 @@ $if not set bmkyr $setglobal bmkyr 2017
 $if not set endyr $setglobal endyr 2020
 * growth rate
 $if not set etaval $setglobal etaval 0.02
+* clean backstop active [0] no, [1] yes
+$if not set swclbsval $setglobal swclbsval 1
 
 
 * -----------------------------------------------------------------------------
@@ -291,8 +293,10 @@ thetax = %thetaxval%;
 srv = 1-delta;
 
 * single period survival rate
+parameter tstep(t)	time step;
 parameter srvt(t)	single period survival rate indexed;
-srvt(t) = srv;
+tstep(t) = 1;
+srvt(t) = srv**tstep(t);
 
 * productivity growth
 parameter prodf     productivity growth factor;
