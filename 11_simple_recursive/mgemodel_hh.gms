@@ -128,8 +128,8 @@ $prod:INV(r) s:esub_inv
 	i:PA(r,g)	q:i0(r,g)
 
 $prod:LS(r,h)
-	o:PL(q)	q:(le0(r,q,h))	a:GOVT	t:tl(r,h)	p:(1-tl0(r,h))
-	i:PLS(r,h)	q:(ls0(r,h))
+	o:PL(q)	q:(le0(r,q,h)*gprod)	a:GOVT	t:tl(r,h)	p:(1-tl0(r,h))
+	i:PLS(r,h)	q:(ls0(r,h)*gprod)
 
 * capital transformation function
 $prod:KS	t:etaK
@@ -150,7 +150,7 @@ $demand:RA(r,h)
 	d:PW(r,h)		q:w0_h(r,h)
 	e:PFX			q:(sum(tp,hhtp0(r,h,tp)))	r:TRANS	
 	e:PLS(r,h)		q:lsr0(r,h)
-	e:PLS(r,h)		q:(ls0(r,h))
+	e:PLS(r,h)		q:(ls0(r,h)*gprod)
 	e:PK			q:ke0(r,h)
 * !!!! fsav_h(r,h) has both positive and negative values
 * --- (not sure if it is technically foreign savings or some other type of adjustment)

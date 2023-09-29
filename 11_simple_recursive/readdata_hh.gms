@@ -10,10 +10,15 @@ $if not set ds $set ds WiNDC_bluenote_cps_census_2017.gdx
 * File separator
 $set sep %system.dirsep%
 
-* share of extant vs. mutable capital (consider making a switch, low, high, off)
-$if not set thetaxval $setglobal thetaxval 0.25
+* share of extant vs. mutable capital --- full putty if 0
+* $if not set thetaxval $setglobal thetaxval 0.25
+$if not set thetaxval $setglobal thetaxval 0
+* benchmark year
+$if not set bmkyr $setglobal bmkyr 2017
+* end year in time horizon
+$if not set endyr $setglobal endyr 2020
 * growth rate
-$if not set etaval $setglobal etaval 0
+$if not set etaval $setglobal etaval 0.02
 
 
 * -----------------------------------------------------------------------------
@@ -108,6 +113,8 @@ $loaddc resco2 secco2
 
 * define margin goods
 gm(g) = yes$(sum((r,m), nm0(r,g,m) + dm0(r,g,m)) or sum((r,m), md0(r,m,g)));
+
+
 
 * specify sparsity parameters
 * parameter
@@ -258,9 +265,22 @@ parameter etaK	capital transformation elasticity;
 etaK = 4;
 
 * Recursive Dynamic Parameters
+
+* specify year/time sets
+set yr  /%bmkyr%*%endyr%/;
+set yrf(yr)	first year;
+set yrl(yr)	last year;
+alias(yr,yr1,yr2,yr3);
+
+* !!!! will remove once flexible time steps implemented
+alias(yr,t,tt);
+
+yrf(yr) = yes$(ord(yr) eq 1);
+yrl(yr) = yes$(ord(yr) eq card(yr));
+
 parameters
 	delta	depreciation rate
-	srv		single period survival rate	
+	srv		single year survival rate	
 	eta		growth rate
 	thetax	extant production share - share of new vintage frozen
 ;
@@ -269,6 +289,21 @@ delta = 0.05;
 eta = %etaval%;
 thetax = %thetaxval%;
 srv = 1-delta;
+
+* single period survival rate
+parameter srvt(t)	single period survival rate indexed;
+srvt(t) = srv;
+
+* productivity growth
+parameter prodf     productivity growth factor;
+prodf(yr) = 1;
+
+loop(yr,
+	prodf(yr) = (1+eta)**(yr.val-%bmkyr%);
+);
+
+parameter gprod     productivity growth no-loopyear;
+gprod=1;
 
 parameters
 	ktot0(r)		base year total capital (mutable + extant)
