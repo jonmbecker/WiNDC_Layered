@@ -39,6 +39,10 @@ ABORT$(MGEMODEL.objval > 1e-4) "Error solving MGE model.";
 rep(r,s,t,"Y_CLBS")$[clbs_act(r,s)] = Y_CLBS.L(r,s);
 rep(r,s,t,"YM")$[ele(s)] = YM.L(r,s)*sum(g,ys0(r,s,g));
 rep(r,g,t,"SX") = X.l(r,g)*s0(r,g);
+rep(r,h,t,"W") = W.l(r,h);
+rep("ALL",h,t,"W") = sum(r,W.l(r,h)*w0_h(r,h))/sum(r,w0_h(r,h));
+rep("ALL","ALL",t,"W") = sum((r,h),W.l(r,h)*w0_h(r,h))/sum((r,h),w0_h(r,h));
+rep("ALL","ALL",t,"TRANS") = TRANS.l;
 
 * end loop over t
 );

@@ -1,4 +1,4 @@
-$stitle initialize policy
+$title initialize policy
 
 *------------------------------------------------------------------------
 * clean subsidy
@@ -22,4 +22,41 @@ cl_sub_yr(t) = 0;
 loop(t$[t.val>2020],
 cl_sub_yr(t) = %clsubval%;
 );
+
+*------------------------------------------------------------------------
+* output subsidy
+*------------------------------------------------------------------------
+* switch to enable output subsidy
+$if not set sw_osubval $setglobal sw_osubval 0
+* output subsidy rate
+$if not set osubval $setglobal osubval 0.05
+
+scalar sw_osub "switch for output subsidy" /%sw_osubval%/;
+
+parameters
+	o_sub
+;
+
+o_sub = 0;
+
+
+*------------------------------------------------------------------------
+* closure rule
+*------------------------------------------------------------------------
+
+* switch to enable free deficit subsidy
+$if not set swjpowval $setglobal swjpowval 0
+* switch to enable government waste
+$if not set swwasteval $setglobal swwasteval 0
+
+parameters
+	swjpow
+	swwaste
+;
+
+swjpow = %swjpowval%;
+swwaste = %swwasteval%;
+
+
+
 

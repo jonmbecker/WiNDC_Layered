@@ -57,10 +57,12 @@ $consumer:
 	RA(r,h)		! Representative agent
 	NYSE		! Aggregate capital owner
 	GOVT		! Aggregate government
+	SUBA		! Subsidy handling agent
 
 $auxiliary:
 	TRANS		! Budget balance rationing constraint
-
+	CLSUB_COST$[sw_clsub]	! clean subsidy cost
+	SUBA_BAL	! Balance of SUBA
 
 *------------------------------------------------------------------------
 * Backstop CLBS - generic clean backstop tech
@@ -70,7 +72,8 @@ $auxiliary:
 $prod:Y_CLBS(r,s)$[clbs_act(r,s)]	s:es_clbs(r,s)	mva:0 m(mva):0 va(mva):0
 	o:PY(r,g)	q:clbs_out(r,s,g)
 +		a:GOVT	t:ty(r,s)	p:(1-ty0(r,s))
-+		a:GOVT$[sw_clsub]	t:cl_sub$[sw_clsub]
++		a:SUBA$[sw_clsub]	t:cl_sub$[sw_clsub]
+*+		a:GOVT$[sw_clsub]	t:cl_sub$[sw_clsub]
 	i:PA(r,g)	q:(clbs_in(r,g,s)*clbs_mkup(r,s))		m:
 	i:PL(r)		q:(clbs_in(r,"l",s)*clbs_mkup(r,s))		va:
 	i:RK(r,s)	q:(clbs_in(r,"k",s)*clbs_mkup(r,s))		va:
@@ -97,7 +100,10 @@ $prod:E(r,s)$[en_bar(r,s)]  s:esub_ele(s) cgo:esub_fe(s) g.tl(cgo):0
     i:PDCO2(r)#(fe)   q:(dcb0(r,fe,s))    p:(1e-6)    fe.tl:
 
 $prod:YM(r,s)$[y_(r,s)]	s:esub_klem(s)	m:esub_ne(s) ve:esub_ve(s) g.tl(m):0
-	o:PY(r,g)	q:ys0(r,s,g)	a:GOVT	t:ty(r,s)	p:(1-ty0(r,s))
+	o:PY(r,g)	q:ys0(r,s,g)
++		a:GOVT	t:ty(r,s)	p:(1-ty0(r,s))
++		a:SUBA$[sw_osub]	t:o_sub$[sw_osub]
+* +		a:GOVT$[sw_osub]	t:o_sub$[sw_osub]
 	i:PA(r,g)$[(not en(g))]		q:id0(r,g,s)	m:$((not cru(g)))	g.tl:$(cru(g))
 	i:PE(r,s)$[en_bar(r,s)]		q:en_bar(r,s)	ve:
 	i:PVA(r,s)$[va_bar(r,s)]	q:va_bar(r,s)	ve:
@@ -188,6 +194,25 @@ $demand:GOVT
 	d:PA(r,g)	q:g0(r,g)
 	e:PFX		q:govdef0
 	e:PFX		q:(-sum((r,h),tp0(r,h)))	r:TRANS
+	e:PFX$[(swjpow)]		q:(1)$[(swjpow)]		r:SUBA_BAL$[(swjpow)]
+	e:PFX		q:(-1)		r:SUBA_BAL
+
+* subsidy handling agent
+$demand:SUBA
+	d:PFX		q:1
+	e:PFX		q:1
+	e:PFX		q:1	R:SUBA_BAL
+
+* subsidy agent balance variable
+$constraint:SUBA_BAL
+	1 =e= SUBA;
+
+* clean backstop subsidy cost
+$constraint:CLSUB_COST$[sw_clsub]
+	CLSUB_COST
+	=e=
+	-1*sum((r,s)$[clbs_act(r,s)],Y_CLBS(r,s)*sum(g,PY(r,g)*clbs_out(r,s,g))*cl_sub)
+;
 
 $demand:NYSE
 	d:PK
@@ -214,9 +239,14 @@ PCO2.l = 1e-6;
 PDCO2.l(r) = 1e-6;
 
 TRANS.l = 1;
+* if dynamic, must load in transfers from BaU case and fix
+TRANS.fx$[swwaste] = 1;
 
 * generic clean backstop initalization
 Y_CLBS.l(r,s) = 0;
 PR_CLBS.l(r,s) = 1e-6;
 PR_CLBS.lo(r,s) = 1e-6;
+
+SUBA_BAL.L = 0;
+SUBA_BAL.lo = -inf;
 

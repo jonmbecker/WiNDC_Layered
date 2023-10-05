@@ -10,6 +10,8 @@ $if not set ds $set ds WiNDC_bluenote_cps_census_2017.gdx
 * File separator
 $set sep %system.dirsep%
 
+$if not set scn $setglobal scn BAU
+
 * share of extant vs. mutable capital --- full putty if 0
 * $if not set thetaxval $setglobal thetaxval 0.25
 $if not set thetaxval $setglobal thetaxval 0
@@ -20,7 +22,7 @@ $if not set endyr $setglobal endyr 2035
 * growth rate
 $if not set etaval $setglobal etaval 0.02
 * clean backstop active [0] no, [1] yes
-$if not set swclbsval $setglobal swclbsval 1
+$if not set swclbsval $setglobal swclbsval 0
 
 
 * -----------------------------------------------------------------------------
@@ -244,6 +246,7 @@ lsr_shr(r,h) = lsr0(r,h)/z0_h(r,h);
 
 * Install value for esub_z
 esub_zh(r,h) = 1 + theta_l / lsr_shr(r,h);
+* esub_zh(r,h) = 0.5;
 esub_wh(r,h) = 0;
 
 * some elasticities
