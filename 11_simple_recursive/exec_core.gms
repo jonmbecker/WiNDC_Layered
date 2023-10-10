@@ -31,14 +31,15 @@ ABORT$(mgemodel.objval > 1e-4) "Error in benchmark calibration of the MGE model.
 * set numeraire -- SOE
 PFX.FX = 1;
 
-o_sub = -1*%osubval%;
+o_sub = %osubval%;
+
+o_sub_raw = %osubrawval%;
 
 * solve benchmark
 mgemodel.iterlim = 100000;
 $INCLUDE MGEMODEL.GEN
 SOLVE mgemodel using mcp;
 ABORT$(mgemodel.objval > 1e-4) "Error in benchmark calibration of the MGE model.";
-
 
 parameter rep;
 

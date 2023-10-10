@@ -63,6 +63,8 @@ $auxiliary:
 	TRANS		! Budget balance rationing constraint
 	CLSUB_COST$[sw_clsub]	! clean subsidy cost
 	SUBA_BAL	! Balance of SUBA
+	OSUB$[sw_osub]	! Endogenous subsidy
+	OSUBRAW$[sw_osub] ! raw subsidy value
 
 *------------------------------------------------------------------------
 * Backstop CLBS - generic clean backstop tech
@@ -102,7 +104,12 @@ $prod:E(r,s)$[en_bar(r,s)]  s:esub_ele(s) cgo:esub_fe(s) g.tl(cgo):0
 $prod:YM(r,s)$[y_(r,s)]	s:esub_klem(s)	m:esub_ne(s) ve:esub_ve(s) g.tl(m):0
 	o:PY(r,g)	q:ys0(r,s,g)
 +		a:GOVT	t:ty(r,s)	p:(1-ty0(r,s))
-+		a:SUBA$[sw_osub]	t:o_sub$[sw_osub]
+* +		a:SUBA$[sw_osub]	t:o_sub$[sw_osub]
+* +		a:SUBA$[sw_osub]	N:OSUB$[sw_osub] M:(-1)$[sw_osub]
+* +		a:SUBA$[sw_osub_s(s)]	N:OSUB$[sw_osub_s(s)] M:(-1)$[sw_osub_s(s)]
+* straight to GOVT to ease solver
+* electricity specific subsidy
++		a:GOVT$[sw_osub_s(s)]	N:OSUB$[sw_osub_s(s)] M:(-1)$[sw_osub_s(s)]
 * +		a:GOVT$[sw_osub]	t:o_sub$[sw_osub]
 	i:PA(r,g)$[(not en(g))]		q:id0(r,g,s)	m:$((not cru(g)))	g.tl:$(cru(g))
 	i:PE(r,s)$[en_bar(r,s)]		q:en_bar(r,s)	ve:
@@ -194,8 +201,11 @@ $demand:GOVT
 	d:PA(r,g)	q:g0(r,g)
 	e:PFX		q:govdef0
 	e:PFX		q:(-sum((r,h),tp0(r,h)))	r:TRANS
-	e:PFX$[(swjpow)]		q:(1)$[(swjpow)]		r:SUBA_BAL$[(swjpow)]
-	e:PFX		q:(-1)		r:SUBA_BAL
+*	e:PFX$[(swjpow)]		q:(1)$[(swjpow)]		r:SUBA_BAL$[(swjpow)]
+*	e:PFX		q:(-1)		r:SUBA_BAL
+*	e:PFX$[(not swjpow)]		q:(-1)$[(not swjpow)]		r:SUBA_BAL$[(not swjpow)]
+* offset raw output subsidy in FREE case
+	e:PFX$[(swjpow)]		q:(1)$[(swjpow)]	r:OSUBRAW$[(swjpow)]
 
 * subsidy handling agent
 $demand:SUBA
@@ -214,6 +224,21 @@ $constraint:CLSUB_COST$[sw_clsub]
 	-1*sum((r,s)$[clbs_act(r,s)],Y_CLBS(r,s)*sum(g,PY(r,g)*clbs_out(r,s,g))*cl_sub)
 ;
 
+* output subsidy options
+$constraint:OSUB$[sw_osub_rate$sw_osub]
+	OSUB =e= o_sub
+;
+
+$constraint:OSUB$[sw_osub_raw$sw_osub]
+*	sum((r,s),YM(r,s)*sum(g,PY(r,g)*ys0(r,s,g)))*OSUB =e= o_sub_raw
+	sum((r,s)$[sw_osub_s(s)],YM(r,s)*sum(g,PY(r,g)*ys0(r,s,g)))*OSUB =e= o_sub_raw
+;
+
+$constraint:OSUBRAW$[sw_osub]
+*	sum((r,s),YM(r,s)*sum(g,PY(r,g)*ys0(r,s,g)))*OSUB =e= o_sub_raw
+	sum((r,s)$[sw_osub_s(s)],YM(r,s)*sum(g,PY(r,g)*ys0(r,s,g)))*OSUB =e= OSUBRAW
+;
+
 $demand:NYSE
 	d:PK
 	e:PY(r,g)				q:yh0(r,g)
@@ -224,6 +249,7 @@ $demand:NYSE
 
 $constraint:TRANS
 	GOVT =e= sum((r,g), PA(r,g)*g0(r,g));
+
 
 
 $OFFTEXT
