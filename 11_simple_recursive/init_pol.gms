@@ -6,7 +6,7 @@ $title initialize policy
 * switch to enable clean subsidy
 $if not set sw_clsubval $setglobal sw_clsubval 0
 * clean subsidy rate
-$if not set clsubval $setglobal clsubval 0.2
+$if not set clsubval $setglobal clsubval 0.5
 
 scalar sw_clsub	"switch for subsidy on cl" /%sw_clsubval%/;
 
@@ -52,6 +52,17 @@ o_sub_raw = 0;
 parameter sw_osub_s(s)	sector specific switch;
 
 sw_osub_s(s)$ele(s) = sw_osub;
+
+
+*------------------------------------------------------------------------
+* financing mechanism
+*------------------------------------------------------------------------
+* switch to enable capital tax financing of subsidy
+$if not set sw_tksubval $setglobal sw_tksubval 0
+
+scalar sw_tksub "capital tax financing of subsidy?" /%sw_tksubval%/;
+
+
 
 *------------------------------------------------------------------------
 * closure rule

@@ -5,6 +5,7 @@ scalar swclbs	generic clean backstop switch	/%swclbsval%/;
 parameter clbs_act(r,s)	clean (cl) backstop (bs) active or inactive;
 clbs_act(r,s) = no;
 
+
 * choose sectors to create clean backstop substitute
 * only electricity for now
 clbs_act(r,s)$[swclbs$(sum(g,ys0(r,s,g)))$ele(s)] = yes;

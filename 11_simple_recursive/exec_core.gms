@@ -35,6 +35,9 @@ o_sub = %osubval%;
 
 o_sub_raw = %osubrawval%;
 
+cl_sub = -1*%clsubval%;
+
+
 * solve benchmark
 mgemodel.iterlim = 100000;
 $INCLUDE MGEMODEL.GEN
@@ -57,7 +60,6 @@ rep("ALL",h,t,"C") = sum(r,C.l(r,h)*c0_h(r,h))/sum(r,c0_h(r,h));
 rep("ALL","ALL",t,"C") = sum((r,h),C.l(r,h)*c0_h(r,h))/sum((r,h),c0_h(r,h));
 rep("ALL",h,t,"Z") = sum(r,Z.l(r,h)*z0_h(r,h))/sum(r,z0_h(r,h));
 rep("ALL","ALL",t,"Z") = sum((r,h),Z.l(r,h)*z0_h(r,h))/sum((r,h),z0_h(r,h));
-
 );
 
 

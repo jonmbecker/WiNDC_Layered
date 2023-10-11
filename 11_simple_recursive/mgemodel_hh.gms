@@ -19,7 +19,7 @@ $sectors:
 	W(r,h)							! Welfare index
  	LS(r,h)							! Labor supply
 
-	KS				! Aggregate capital supply
+	KS$(not swrks)				! Aggregate capital supply
 	CO2(r)			! co2 emissions
 	
 	Y_CLBS(r,s)$[clbs_act(r,s)]	! Generic clean backstop technology
@@ -33,7 +33,7 @@ $commodities:
 	PN(g)			!	National market
 	PL(r)			!	Wage rate
 
-	RK(r,s)$[kd0(r,s)]				! Sectoral rental rate (mutable)
+	RK(r,s)$[kd0(r,s)$(not swrks)]				! Sectoral rental rate (mutable)
 	RKX(r,s)$[kd0(r,s)$ks_x(r,s)]	! Sectoral rental rate (extant)
 	RKS			! Aggregate capital market price
 	PK			! aggregate return to capital
@@ -65,6 +65,9 @@ $auxiliary:
 	SUBA_BAL	! Balance of SUBA
 	OSUB$[sw_osub]	! Endogenous subsidy
 	OSUBRAW$[sw_osub] ! raw subsidy value
+	I_RKS_VA(r,s)$[va_bar(r,s)]	! mutable capital demand
+	TK_SUB$[sw_tksub]	! Capital tax to cover output subsidy
+	TK_SUB_RAW$[sw_tksub]
 
 *------------------------------------------------------------------------
 * Backstop CLBS - generic clean backstop tech
@@ -74,14 +77,14 @@ $auxiliary:
 $prod:Y_CLBS(r,s)$[clbs_act(r,s)]	s:es_clbs(r,s)	mva:0 m(mva):0 va(mva):0
 	o:PY(r,g)	q:clbs_out(r,s,g)
 +		a:GOVT	t:ty(r,s)	p:(1-ty0(r,s))
-+		a:SUBA$[sw_clsub]	t:cl_sub$[sw_clsub]
-*+		a:GOVT$[sw_clsub]	t:cl_sub$[sw_clsub]
+* +		a:SUBA$[sw_clsub]	t:cl_sub$[sw_clsub]
++		a:GOVT$[sw_clsub]	t:cl_sub$[sw_clsub]
 	i:PA(r,g)	q:(clbs_in(r,g,s)*clbs_mkup(r,s))		m:
 	i:PL(r)		q:(clbs_in(r,"l",s)*clbs_mkup(r,s))		va:
-	i:RK(r,s)	q:(clbs_in(r,"k",s)*clbs_mkup(r,s))		va:
+	i:RK(r,s)$(not swrks)	q:(clbs_in(r,"k",s)*clbs_mkup(r,s))		va:
 +		a:GOVT	t:tk(r,s)	p:(1-tk0(r))
-* 	i:RKS	q:(clbs_in(r,"k",s)*clbs_mkup(r,s))		va:
-* +		a:GOVT	t:tk(r,s)	p:(1-tk0(r))
+	i:RKS$(swrks)	q:(clbs_in(r,"k",s)*clbs_mkup(r,s))		va:
++		a:GOVT	t:tk(r,s)	p:(1-tk0(r))
 	i:PR_CLBS(r,s)	q:(clbs_in(r,"tsf",s)*clbs_mkup(r,s))
 +		a:GOVT	t:tk(r,s)	p:(1-tk0(r))
 
@@ -91,7 +94,14 @@ $prod:Y_CLBS(r,s)$[clbs_act(r,s)]	s:es_clbs(r,s)	mva:0 m(mva):0 va(mva):0
 * value added
 $prod:VA(r,s)$[va_bar(r,s)] s:esub_va
     o:PVA(r,s)  q:(va_bar(r,s))
-    i:RK(r,s)     q:(kd0(r,s))	a:GOVT	t:tk(r,s)	p:(1+tk0(r))
+    i:RK(r,s)$(not swrks)     q:(kd0(r,s))
++		a:GOVT	t:tk(r,s)	p:(1+tk0(r))
+* + 		a:SUBA$[sw_tksub]	N:TK_SUB$[sw_tksub]	m:(1)$[sw_tksub]
++ 		a:GOVT$[sw_tksub]	N:TK_SUB$[sw_tksub]	m:(1)$[sw_tksub]
+    i:RKS$(swrks)     q:(kd0(r,s))
++		a:GOVT	t:tk(r,s)	p:(1+tk0(r))
+* + 		a:SUBA$[sw_tksub]	N:TK_SUB$[sw_tksub]	m:(1)$[sw_tksub]
++ 		a:GOVT$[sw_tksub]	N:TK_SUB$[sw_tksub]	m:(1)$[sw_tksub]
     i:PL(r)    q:(ld0(r,s))
 
 * energy
@@ -120,7 +130,10 @@ $prod:YX(r,s)$[y_(r,s)$ks_x(r,s)]  s:0 va:0	g.tl:0
 	o:PY(r,g)	q:ys0(r,s,g)            a:GOVT t:ty(r,s)    p:(1-ty0(r,s))
 	i:PA(r,g)	q:id0(r,g,s)	g.tl:$(em(g))
 	i:PL(r)		q:ld0(r,s)	va:
-	i:RKX(r,s)	q:kd0(r,s)	va:		a:GOVT	t:tk(r,s)	p:(1+tk0(r))
+	i:RKX(r,s)	q:kd0(r,s)	va:
++		a:GOVT	t:tk(r,s)	p:(1+tk0(r))
+* + 		a:SUBA$[sw_tksub]	N:TK_SUB$[sw_tksub]	m:(1)$[sw_tksub]
++ 		a:GOVT$[sw_tksub]	N:TK_SUB$[sw_tksub]	m:(1)$[sw_tksub]
 	i:PDCO2(r)#(em)		q:(dcb0(r,em,s))		p:(1e-6)	em.tl:
 
 $prod:X(r,g)$x_(r,g)  t:etranx(g)
@@ -170,9 +183,11 @@ $prod:LS(r,h)
 	i:PLS(r,h)	q:(ls0(r,h)*gprod)
 
 * capital transformation function
-$prod:KS	t:etaK
+$prod:KS$(not swrks)	t:etaK
 	o:RK(r,s)	q:ksrs_m0(r,s)
 	i:RKS		q:(sum((r,s),ksrs_m0(r,s)))
+* + 		a:GOVT$[sw_tksub]	N:TK_SUB$[sw_tksub]	m:(1)$[sw_tksub]
+	
 
 $prod:Z(r,h)	s:esub_zh(r,h)
 	o:PZ(r,h)		q:z0_h(r,h)
@@ -239,6 +254,45 @@ $constraint:OSUBRAW$[sw_osub]
 	sum((r,s)$[sw_osub_s(s)],YM(r,s)*sum(g,PY(r,g)*ys0(r,s,g)))*OSUB =e= OSUBRAW
 ;
 
+*------------------------------------------------------------------------
+* subsidy financing mechanism
+*------------------------------------------------------------------------
+
+* mutable capital demand
+$constraint:I_RKS_VA(r,s)$[va_bar(r,s)]
+	I_RKS_VA(r,s)
+	=e=
+	kd0(r,s)*(PVA(r,s)/((RKS$(swrks)+(RK(r,s)+1e-6)$(not swrks))*((1+tk(r,s)+TK_SUB$[sw_tksub])/(1+tk0(r)))))**esub_va
+*	kd0(r,s)*(PVA(r,s)/((RK(r,s)+1e-6)*((1+tk(r,s))/(1+tk0(r)))))**esub_va
+;
+
+
+* force capital tax rate to cover output subsidy rate
+$constraint:TK_SUB$[sw_tksub]
+	sum((r,s),
+* Mutable --- I_RK_VA
+		TK_SUB*(RKS$(swrks) + RK(r,s)$(not swrks))*VA(r,s)*I_RKS_VA(r,s)$[va_bar(r,s)$sw_tksub]
+* Extant capital
+		+ (TK_SUB*RKX(r,s)*YX(r,s)*kd0(r,s))$[y_(r,s)$ks_x(r,s)$sw_tksub]
+	)
+	=e=
+	OSUBRAW$[sw_osub]
+	+ CLSUB_COST$[sw_clsub]
+;
+
+* calculate value of capital tax
+$constraint:TK_SUB_RAW$[sw_tksub]
+	sum((r,s),
+* Mutable --- I_RK_VA
+		TK_SUB*(RKS$(swrks) + RK(r,s)$(not swrks))*VA(r,s)*I_RKS_VA(r,s)$[va_bar(r,s)$sw_tksub]
+* Extant capital
+		+ (TK_SUB*RKX(r,s)*YX(r,s)*kd0(r,s))$[y_(r,s)$ks_x(r,s)$sw_tksub]
+	)
+	=e=
+	TK_SUB_RAW
+;
+
+
 $demand:NYSE
 	d:PK
 	e:PY(r,g)				q:yh0(r,g)
@@ -246,10 +300,10 @@ $demand:NYSE
 	e:RKX(r,s)$[ks_x(r,s)]				q:ks_x(r,s)
 *	e:PREB(r,bt)$[activebt(r,bt)$swbt]	q:bse(r,"ff",bt)
 	e:PR_CLBS(r,s)$[clbs_act(r,s)]	q:clbse(r,s)
+	
 
 $constraint:TRANS
 	GOVT =e= sum((r,g), PA(r,g)*g0(r,g));
-
 
 
 $OFFTEXT
@@ -276,3 +330,7 @@ PR_CLBS.lo(r,s) = 1e-6;
 SUBA_BAL.L = 0;
 SUBA_BAL.lo = -inf;
 
+* initialize mutable capital demand
+I_RKS_VA.l(r,s)$[va_bar(r,s)] =
+	kd0(r,s)*(PVA.l(r,s)/((RKS.l$(swrks) + (RK.l(r,s)+1e-6)$(not swrks))*((1+tk(r,s)+TK_SUB.l$[sw_tksub])/(1+tk0(r)))))**esub_va
+;

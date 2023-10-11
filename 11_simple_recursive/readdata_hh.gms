@@ -23,7 +23,10 @@ $if not set endyr $setglobal endyr 2035
 $if not set etaval $setglobal etaval 0.02
 * clean backstop active [0] no, [1] yes
 $if not set swclbsval $setglobal swclbsval 0
+* national capital or not
+$if not set swrksval $setglobal swrksval 1
 
+scalar swrks /%swrksval%/;
 
 * -----------------------------------------------------------------------------
 * Read in the base dataset
