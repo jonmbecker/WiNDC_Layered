@@ -334,3 +334,7 @@ SUBA_BAL.lo = -inf;
 I_RKS_VA.l(r,s)$[va_bar(r,s)] =
 	kd0(r,s)*(PVA.l(r,s)/((RKS.l$(swrks) + (RK.l(r,s)+1e-6)$(not swrks))*((1+tk(r,s)+TK_SUB.l$[sw_tksub])/(1+tk0(r)))))**esub_va
 ;
+
+OSUBRAW.lo = -inf;
+TK_SUB.lo = -inf;
+TK_SUB_RAW.lo = -inf;

@@ -251,6 +251,7 @@ lsr_shr(r,h) = lsr0(r,h)/z0_h(r,h);
 esub_zh(r,h) = 1 + theta_l / lsr_shr(r,h);
 * esub_zh(r,h) = 0.5;
 esub_wh(r,h) = 0;
+* esub_wh(r,h) = 0.5;
 
 * some elasticities
 parameters

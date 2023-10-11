@@ -52,6 +52,7 @@ o_sub_raw = 0;
 parameter sw_osub_s(s)	sector specific switch;
 
 sw_osub_s(s)$ele(s) = sw_osub;
+* sw_osub_s(s) = sw_osub;
 
 
 *------------------------------------------------------------------------
